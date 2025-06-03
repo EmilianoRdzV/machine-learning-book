@@ -136,7 +136,7 @@ class Perceptron:
         rgen = np.random.RandomState(self.random_state)
         self.w_ = rgen.normal(loc=0.0, scale=0.01, size=X.shape[1])
         self.b_ = np.float_(0.)
-        
+
         self.errors_ = []
 
         for _ in range(self.n_iter):
@@ -181,14 +181,14 @@ try:
     df = pd.read_csv(s,
                      header=None,
                      encoding='utf-8')
-    
+
 except HTTPError:
     s = 'iris.data'
     print('From local Iris path:', s)
     df = pd.read_csv(s,
                      header=None,
                      encoding='utf-8')
-    
+
 df.tail()
 
 
@@ -365,10 +365,10 @@ class AdalineGD:
             # a sigmoid function to implement a logistic regression classifier.
             output = self.activation(net_input)
             errors = (y - output)
-            
+
             #for w_j in range(self.w_.shape[0]):
             #    self.w_[w_j] += self.eta * (2.0 * (X[:, w_j]*errors)).mean()
-            
+
             self.w_ += self.eta * 2.0 * X.T.dot(errors) / X.shape[0]
             self.b_ += self.eta * 2.0 * errors.mean()
             loss = (errors**2).mean()
@@ -482,7 +482,7 @@ class AdalineSGD:
       Mean squared error loss function value averaged over all
       training examples in each epoch.
 
-        
+
     """
     def __init__(self, eta=0.01, n_iter=10, shuffle=True, random_state=None):
         self.eta = eta
@@ -490,7 +490,7 @@ class AdalineSGD:
         self.w_initialized = False
         self.shuffle = shuffle
         self.random_state = random_state
-        
+
     def fit(self, X, y):
         """ Fit training data.
 
@@ -534,14 +534,14 @@ class AdalineSGD:
         """Shuffle training data"""
         r = self.rgen.permutation(len(y))
         return X[r], y[r]
-    
+
     def _initialize_weights(self, m):
         """Initialize weights to small random numbers"""
         self.rgen = np.random.RandomState(self.random_state)
         self.w_ = self.rgen.normal(loc=0.0, scale=0.01, size=m)
         self.b_ = np.float_(0.)
         self.w_initialized = True
-        
+
     def _update_weights(self, xi, target):
         """Apply Adaline learning rule to update the weights"""
         output = self.activation(self.net_input(xi))
@@ -550,7 +550,7 @@ class AdalineSGD:
         self.b_ += self.eta * 2.0 * error
         loss = error**2
         return loss
-    
+
     def net_input(self, X):
         """Calculate net input"""
         return np.dot(X, self.w_) + self.b_
