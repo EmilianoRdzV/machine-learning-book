@@ -1,63 +1,111 @@
-# Análisis de Tiempos de Respuesta de Endpoints
+Análisis de Tiempos de Respuesta de Endpoints 📈
+Fecha de Documentación: 2025-06-05 (Reemplazar con la fecha de la última actualización)
 
-**Fecha de Documentación:** 2025-06-05 *(Reemplaza con la fecha actual de documentación)*
+Metodología de Medición (Ejemplo) 📝
+Los tiempos de "Cold Start" (Arranque en Frío) se midieron tomando la primera invocación a la función Lambda después de un periodo de inactividad de al menos 30 minutos o inmediatamente después de un nuevo despliegue de la función.
 
-## Metodología de Medición (Ejemplo) 📝
+Los tiempos "Warm" (Lambda Activa/Caliente) se midieron promediando 5 invocaciones subsecuentes a la misma instancia de la función Lambda, una vez que esta ya había procesado la solicitud de "cold start" o varias solicitudes previas.
 
-* Los tiempos de **"Cold Start"** se midieron tomando la primera invocación a la función Lambda después de un período de inactividad de al menos 30 minutos o después de un nuevo despliegue.
-* Los tiempos **"Warm"** se midieron promediando 5 invocaciones subsecuentes a la misma instancia de la función Lambda una vez que ya estaba activa.
-* **Herramientas utilizadas:** Postman/Newman para las solicitudes; logs de CloudWatch para corroborar el comportamiento de la Lambda.
-* **Ambiente de pruebas:** Desarrollo *(Especifica si es otro)*.
+Herramientas utilizadas: Postman y Newman para la ejecución de solicitudes; AWS CloudWatch Logs para la observación del comportamiento de Lambda y la confirmación de Init Duration cuando fue posible.
 
----
-## Endpoint: Timbrado de Boleto Normal 📨
+Ambiente de pruebas: Desarrollo (Especificar si fue QA, Producción, etc.)
 
-* **Descripción:** Procesa y timbra un boleto estándar individual.
-* **URL (Ejemplo):** `POST /Development/FacturacionIndividual/TimbrarIndividualEcomm`
-* **Fecha de Medición:** 2025-06-05 *(Reemplaza con tu fecha)*
+📌 Endpoint 1: Timbrado de Boleto Normal
+Descripción: Procesa y timbra un boleto estándar individual o múltiples boletos que no requieren consultas proactivas.
 
-### Tiempos de Respuesta:
+URL (Ejemplo): POST /Development/FacturacionIndividual/TimbrarIndividualEcomm
 
-| Escenario                 | Tiempo de Respuesta | Notas Adicionales                                  |
-|---------------------------|---------------------|----------------------------------------------------|
-| Cold Start (Arranque en Frío) | 8.74 s              | _Primera invocación tras inactividad/despliegue._  |
-| Warm (Lambda Activa)      | 554 ms              | _Invocaciones subsecuentes a instancia activa._    |
+Fecha de Medición: 2025-06-05 (Reemplazar)
 
----
-## Endpoint: Búsqueda de Boletos/PNR 🔍
+Tiempos de Respuesta:
+Escenario
 
-* **Descripción:** Realiza búsquedas de boletos o PNRs.
-* **URL (Ejemplo):** `POST /ruta/a/tu/endpoint/busqueda`
-* **Fecha de Medición:** 2025-06-05 *(Reemplaza con tu fecha)*
+Tiempo de Respuesta
 
-### Tiempos de Respuesta (Lambda Warm):
+Notas Adicionales
 
-| Escenario                                | Tiempo de Respuesta | Notas Adicionales                                      |
-|------------------------------------------|---------------------|--------------------------------------------------------|
-| Búsqueda con N° máximo de boletos (10)   | 2.1 s               | _Lambda en estado "warm"._                             |
-| Búsqueda con N° máximo de PNR (10)       | 1.95 s              | _Lambda en estado "warm"._                             |
-| *Cold Start para búsquedas (Estimado)* | *[Estimar/Medir]* | _Se recomienda medir este escenario específicamente._   |
+Boleto Normal Individual - Cold Start
 
----
-## Endpoint: Timbrado de Boleto Proactivo (Consulta a PRAXIS) 🔄
+8.74 s
 
-* **Descripción:** Procesa y timbra un boleto que requiere una consulta proactiva al servicio PRAXIS.
-* **URL (Ejemplo):** `POST /Development/FacturacionIndividual/TimbrarIndividualEcomm` *(Si es el mismo endpoint, diferenciar por tipo de boleto en los parámetros)*
-* **Fecha de Medición:** 2025-06-05 *(Reemplaza con tu fecha)*
+Primera invocación a una instancia nueva de Lambda. (Observada una instancia en 8.70s).
 
-### Tiempos de Respuesta:
+Boleto Normal Individual - Warm
 
-| Escenario                                     | Tiempo de Respuesta | Notas Adicionales                                                                  |
-|-----------------------------------------------|---------------------|------------------------------------------------------------------------------------|
-| Boleto Proactivo (1 registro) - Lambda Warm   | 18.89 s             | _Incluye consulta al servicio PRAXIS. Lambda en estado "warm"._                    |
-| *Boleto Proactivo (1 registro) - Cold Start* | *[Estimar/Medir]* | _Se recomienda medir este escenario específicamente. Sumará al tiempo de PRAXIS._   |
+554 ms
 
-**Nota General sobre Tiempos de Respuesta:**
-* Si una solicitud de timbrado demora **más de 15 segundos**, es muy probable que uno o más de los boletos en la solicitud sean de tipo **proactivo** y estén involucrando la consulta al servicio PRAXIS.
+Invocaciones subsecuentes a una instancia ya iniciada.
 
----
-### Consideraciones Adicionales:
+Timbrado Máx. Registros (10) - Warm
 
-* **Parámetros de Prueba:** Especifica los parámetros clave utilizados si influyen significativamente en los tiempos (ej. cantidad de boletos en una solicitud múltiple).
-* **Percentiles:** Para análisis más robustos, considera registrar percentiles (p90, p95, p99) además de los promedios, especialmente si realizas pruebas de carga.
-* **Número de Muestras:** Indica cuántas mediciones se tomaron para obtener los tiempos reportados.
+18.52 s
+
+Procesando 10 boletos normales simultáneamente. Lambda en estado "warm".
+
+Timbrado Máx. Registros (10) - Cold Start
+
+[Tu Tiempo aquí]
+
+Se recomienda medir específicamente. Sumará el Init Duration al proceso.
+
+📌 Endpoint 2: Búsqueda de Boletos/PNR
+Descripción: Realiza búsquedas de información facturable basada en números de boleto o localizadores de reservación (PNR). No involucra consultas proactivas a PRAXIS.
+
+URL (Ejemplo): POST /Development/FacturacionIndividual/GDTFComm (Asumiendo que este es el endpoint, ajustar si es otro)
+
+Datos de Prueba: Solicitudes específicas que devuelvan 10 registros para la búsqueda por boletos y 10 registros para la búsqueda por PNR.
+
+Fecha de Medición: 2025-06-05 (Reemplazar)
+
+Tiempos de Respuesta (Lambda Warm):
+Escenario
+
+Tiempo de Respuesta
+
+Notas Adicionales
+
+Búsqueda con N° máximo de boletos (10 registros)
+
+2.1 s
+
+Lambda en estado "warm".
+
+Búsqueda con N° máximo de PNR (10 registros)
+
+1.95 s
+
+Lambda en estado "warm".
+
+Cold Start para búsquedas
+
+[Tu Tiempo aquí]
+
+Se recomienda medir específicamente para este endpoint y tipo de operación.
+
+📌 Endpoint 3: Timbrado de Boleto Proactivo (Consulta a PRAXIS)
+Descripción: Procesa y timbra un boleto que requiere una consulta proactiva al servicio externo PRAXIS para obtener información adicional antes del timbrado.
+
+URL (Ejemplo): POST /Development/FacturacionIndividual/TimbrarIndividualEcomm (Si es el mismo endpoint que el boleto normal, la lógica interna diferencia el tipo de boleto)
+
+Datos de Prueba: Solicitud con un único boleto de tipo "proactivo".
+
+Fecha de Medición: 2025-06-05 (Reemplazar)
+
+Tiempos de Respuesta:
+Escenario
+
+Tiempo de Respuesta
+
+Notas Adicionales
+
+Boleto Proactivo (1 registro) - Lambda Warm
+
+18.89 s
+
+Incluye el tiempo de consulta al servicio PRAXIS. Lambda en estado "warm".
+
+Boleto Proactivo (1 registro) - Cold Start
+
+[Tu Tiempo aquí]
+
+_Se recomienda medir específicamente. Sumará el Init Duration al tiempo de PRAX
