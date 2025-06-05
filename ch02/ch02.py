@@ -12,6 +12,8 @@ from matplotlib.colors import ListedColormap
 # # Machine Learning with PyTorch and Scikit-Learn  
 # # -- Code Examples
 
+# 
+
 # ## Package version checks
 
 # Add folder to path in order to load from the check_packages.py script:
@@ -182,7 +184,7 @@ try:
                      header=None,
                      encoding='utf-8')
 
-except HTTPError:
+except TabError:
     s = 'iris.data'
     print('From local Iris path:', s)
     df = pd.read_csv(s,
