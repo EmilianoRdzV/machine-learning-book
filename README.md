@@ -22,10 +22,10 @@ Los tiempos **"Warm" (Lambda Activa/Caliente)** se midieron promediando 5 invoca
 
 | Escenario                             | Tiempo de Respuesta | Notas Adicionales                                                              |
 | :------------------------------------ | :------------------ | :----------------------------------------------------------------------------- |
-| Boleto Normal Individual - Cold Start | 8.74 s              | Primera invocación a una instancia nueva de Lambda. (Observada una instancia en 8.70s). |
+| Boleto Normal Individual - Cold Start | 8.75 s              | Primera invocación a una instancia nueva de Lambda. (Observada una instancia en 8.70s). |
 | Boleto Normal Individual - Warm       | 554 ms              | Invocaciones subsecuentes a una instancia ya iniciada.                         |
 | Timbrado Máx. Registros (10) - Warm   | 18.52 s             | Procesando 10 boletos normales simultáneamente. Lambda en estado "warm".         |
-| Timbrado Máx. Registros (10) - Cold Start |  PENDIENTE      | PENDIENTE                                                                            |
+| Timbrado Máx. Registros (10) - Cold Start |  26.567      |  Procesando 10 boletos normales simultáneamente. Lambda en estado "cold".                                                                         |
 
 ---
 
@@ -45,11 +45,11 @@ Los tiempos **"Warm" (Lambda Activa/Caliente)** se midieron promediando 5 invoca
 | :-------------------------------------------- | :------------------ | :-------------------------------------------------------------------------------- |
 | Búsqueda con N° máximo de boletos (10 registros) | 2.1 s               | Lambda en estado "warm".                                                          |
 | Búsqueda con N° máximo de PNR (10 registros)    | 1.95 s              | Lambda en estado "warm".                                                          |
-| Cold Start para búsquedas                     | PENDIENTE    | Se recomienda medir específicamente para este endpoint y tipo de operación.       |
+| Cold Start para búsquedas                     | 5.756 s                | Lambda en estado "cold start".                                             |
 
 ---
 
-## Endpoint 3: Timbrado de Boleto Proactivo (Consulta a PRAXIS)
+## Endpoint 3: Timbrado de Boleto Proactivo 
 
 **Descripción:** Procesa y timbra un boleto que requiere una consulta proactiva al servicio externo PRAXIS para obtener información adicional antes del timbrado.
 
@@ -61,5 +61,5 @@ Los tiempos **"Warm" (Lambda Activa/Caliente)** se midieron promediando 5 invoca
 
 | Escenario                                 | Tiempo de Respuesta | Notas Adicionales                                                                |
 | :---------------------------------------- | :------------------ | :------------------------------------------------------------------------------- |
-| Boleto Proactivo (1 registro) - Lambda Warm | 18.89 s             | Incluye el tiempo de consulta al servicio PRAXIS. Lambda en estado "warm".        |
-| Boleto Proactivo (1 registro) - Cold Start  | PENDIENTE    | *Se recomienda medir específicamente. Sumará el Init Duration al tiempo de PRAXIS.* |
+| Boleto Proactivo (1 registro) - Lambda Warm | 18.89 s            | Incluye el tiempo de consulta al servicio externo. Lambda en estado "warm".        |
+| Boleto Proactivo (1 registro) - Cold Start  | 26.721 s           |  Incluye el tiempo de consulta al servicio externo. Lambda en estado "cold start".       |
